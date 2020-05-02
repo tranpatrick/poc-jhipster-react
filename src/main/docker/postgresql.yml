@@ -1,0 +1,11 @@
+version: '2'
+services:
+  halitran-postgresql:
+    image: postgres:12.1
+    # volumes:
+    #     - ~/volumes/jhipster/halitran/postgresql/:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=halitran
+      - POSTGRES_PASSWORD=
+    ports:
+      - 5432:5432

@@ -1,0 +1,39 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "fr.ptran.halitran"
+    },
+    "jhipsterVersion": "6.8.0",
+    "applicationType": "monolith",
+    "baseName": "halitran",
+    "packageName": "fr.ptran.halitran",
+    "packageFolder": "fr/ptran/halitran",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "no",
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "ZWY5OTg5ZDlmMzhmMzZmNDk1ODZiMGZhY2EwNGY5YjllYjAyZGJjNTI2OTIxYzk2NWI1ZTQ0MjdjZjJiNTg1OGRmODA0ZDU1ZTY2MjZjZTBmNzFlN2I5MmVlMjRmMjg3Mjc5MWNjZjUwODdiMTMzMzdkMDZjMDA1NjIxMzMxNzA=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "clientFramework": "react",
+    "clientTheme": "none",
+    "clientThemeVariant": "",
+    "creationTimestamp": 1588419558528,
+    "testFrameworks": ["protractor"],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "blueprints": []
+  }
+}
