@@ -1,0 +1,9 @@
+entity Message {
+	content String maxlength(140),
+    publicationDate ZonedDateTime
+}
+
+relationship ManyToOne {
+	Message{user(id)} to User
+}
+

@@ -1,0 +1,37 @@
+{
+    "name": "Message",
+    "fields": [
+        {
+            "fieldName": "content",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "140"
+        },
+        {
+            "fieldName": "publicationDate",
+            "fieldType": "ZonedDateTime"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "message",
+            "relationshipName": "user",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20200502120500",
+    "entityTableName": "message",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "embedded": false,
+    "clientRootFolder": "",
+    "applications": "*"
+}
