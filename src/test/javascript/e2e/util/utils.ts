@@ -125,3 +125,7 @@ export const click = async (selector: ElementFinder) => {
 export const getRecordsCount = async (table: ElementFinder): Promise<number> => {
   return await table.all(by.css('tbody tr')).count();
 };
+
+export const getMessageRecordsCount = async (div: ElementFinder): Promise<number> => {
+  return await div.all(by.css('.message-container')).count();
+};

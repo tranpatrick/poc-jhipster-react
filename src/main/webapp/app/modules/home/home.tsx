@@ -1,26 +1,113 @@
 import './home.scss';
+import Modal from 'react-bootstrap/Modal'
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
 
 import { connect } from 'react-redux';
-import { Row, Col, Alert } from 'reactstrap';
+import { Row, Col, Alert, Label } from 'reactstrap';
 
-import { IRootState } from 'app/shared/reducers';
+import { AvForm, AvGroup, AvField } from 'availity-reactstrap-validation';
 
-export type IHomeProp = StateProps;
+import { createEntity, getEntities } from "app/entities/message/message.reducer";
+import Button from "react-bootstrap/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { convertDateTimeToServer } from "app/shared/util/date-utils";
+
+// export type IHomeProp = StateProps;
+export interface IHomeProp extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
 export const Home = (props: IHomeProp) => {
-  const { account } = props;
+  useEffect(() => {
+    props.getEntities();
+  }, []);
+
+  const { account, messageList, users, loading } = props;
+
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const sendMsg = (event, errors, values) => {
+    values.publicationDate = convertDateTimeToServer(values.publicationDate);
+
+    if (errors.length === 0) {
+      const entity = {
+        ...values
+      };
+
+      entity.user = account;
+      props.createEntity(entity);
+    }
+  };
 
   return (
     <Row>
       <Col md="9">
-        <h2>Welcome, Java Hipster!</h2>
+        <h2 id="home-heading">Welcome, Java Hipster!</h2>
         <p className="lead">This is your homepage</p>
         {account && account.login ? (
           <div>
-            <Alert color="success">You are logged in as user {account.login}.</Alert>
+            <Alert id="loggedInMsg" color="success">You are logged in as user {account.login}.</Alert>
+            <div>
+              <h2 id="message-heading">
+                Messages
+                <Button id="newMessage" variant="primary" onClick={handleShow} className="btn btn-primary float-right jh-create-entity">
+                  <FontAwesomeIcon icon="plus" />
+                  Create new message
+                </Button>
+                <Modal id='newMessageModal' show={show} onHide={handleClose}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>New message</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <AvForm model={{}} onSubmit={sendMsg}>
+                      <AvGroup>
+                        <Label id="contentLabel" for="message-content">
+                          Content
+                        </Label>
+                        <AvField
+                          id="message-content"
+                          type="text"
+                          name="content"
+                          validate={{
+                            maxLength: { value: 140, errorMessage: 'This field cannot be longer than 140 characters.' }
+                          }}
+                        />
+                      </AvGroup>
+                      <Button variant="secondary" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button id="save-msg" variant="primary" type="submit" onClick={handleClose}>
+                        Send
+                      </Button>
+                    </AvForm>
+                  </Modal.Body>
+                </Modal>
+              </h2>
+              <div className="table-responsive">
+                {messageList && messageList.length > 0 ? (
+                  <div id="messages">
+                    {messageList.sort((a, b) => a.publicationDate > b.publicationDate ? -1 : 1).map((message, i) => (
+                      <div key={message.id} className="message-container">
+                        <div className="message-username">
+                          User: {message.user?.login}
+                        </div>
+                        <div className="message-content">
+                          Message: {message.content}
+                        </div>
+                        <div className="message-publication-date">
+                          Date: {message.publicationDate}
+                        </div>
+                        <hr></hr>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  !loading && <div className="alert alert-warning">No Messages found</div>
+                )}
+              </div>
+            </div>
           </div>
         ) : (
           <div>
@@ -43,46 +130,6 @@ export const Home = (props: IHomeProp) => {
             </Alert>
           </div>
         )}
-        <p>If you have any question on JHipster:</p>
-
-        <ul>
-          <li>
-            <a href="https://www.jhipster.tech/" target="_blank" rel="noopener noreferrer">
-              JHipster homepage
-            </a>
-          </li>
-          <li>
-            <a href="http://stackoverflow.com/tags/jhipster/info" target="_blank" rel="noopener noreferrer">
-              JHipster on Stack Overflow
-            </a>
-          </li>
-          <li>
-            <a href="https://github.com/jhipster/generator-jhipster/issues?state=open" target="_blank" rel="noopener noreferrer">
-              JHipster bug tracker
-            </a>
-          </li>
-          <li>
-            <a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">
-              JHipster public chat room
-            </a>
-          </li>
-          <li>
-            <a href="https://twitter.com/jhipster" target="_blank" rel="noopener noreferrer">
-              follow @jhipster on Twitter
-            </a>
-          </li>
-        </ul>
-
-        <p>
-          If you like JHipster, do not forget to give us a star on{' '}
-          <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">
-            Github
-          </a>
-          !
-        </p>
-      </Col>
-      <Col md="3" className="pad">
-        <span className="hipster rounded" />
       </Col>
     </Row>
   );
@@ -90,9 +137,18 @@ export const Home = (props: IHomeProp) => {
 
 const mapStateToProps = storeState => ({
   account: storeState.authentication.account,
-  isAuthenticated: storeState.authentication.isAuthenticated
+  isAuthenticated: storeState.authentication.isAuthenticated,
+  messageList: storeState.message.entities,
+  loading: storeState.message.loading,
+  users: storeState.userManagement.users,
 });
 
-type StateProps = ReturnType<typeof mapStateToProps>;
+const mapDispatchToProps = {
+  getEntities,
+  createEntity
+};
 
-export default connect(mapStateToProps)(Home);
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
